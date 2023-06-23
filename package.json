@@ -1,0 +1,10 @@
+  {
+  "name": "file-manager",
+  "version": "1.0.0",
+  "dependencies": {
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js -- --username=Aldebaran"
+  }
+}

@@ -1,13 +1,8 @@
 import { argv } from "node:process";
 import { homedir } from "node:os";
-import {
-  youNameIt,
-  greetUser,
-  lineToVariablesParse,
-  youAreHere,
-  Emitter,
-} from "./utils/index.js";
-import { commandLineInput } from "./commandLineInput.js";
+import { parse, path, user } from "./utils/index.js";
+import { commandLine } from "./commandLine.js";
+import { Emitter } from "./emitter.js";
 
 const FileManager = {
   pathToWorkingDirectory: homedir(),
@@ -15,12 +10,12 @@ const FileManager = {
   application: this,
 };
 
-greetUser(youNameIt(argv));
-youAreHere(FileManager.pathToWorkingDirectory);
+user.greetUser(user.youNameIt(argv));
+path.youAreHere(FileManager.pathToWorkingDirectory);
 
-commandLineInput.on("line", async (line) => {
+commandLine.on("line", async (line) => {
   try {
-    const { module, moduleCommand, commandArguments } = lineToVariablesParse(
+    const { module, moduleCommand, commandArguments } = parse.lineToVariables(
       line,
       FileManager.emitter
     );
@@ -32,11 +27,11 @@ commandLineInput.on("line", async (line) => {
       FileManager
     );
 
-    youAreHere(FileManager.pathToWorkingDirectory);
+    path.youAreHere(FileManager.pathToWorkingDirectory);
   } catch (error) {
     console.log(error.message);
 
-    youAreHere(FileManager.pathToWorkingDirectory);
+    path.youAreHere(FileManager.pathToWorkingDirectory);
   }
 });
 

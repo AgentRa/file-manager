@@ -1,4 +1,4 @@
-const lineToVariablesParse = (line, emitter) => {
+const lineToVariables = (line, emitter) => {
   const [moduleCommand, ...commandArguments] = line
     .split(" ")
     .filter((chunk) => chunk !== "");
@@ -17,10 +17,10 @@ const determineModule = (moduleCommand) => {
     cp: "fs",
     mv: "fs",
     rm: "fs",
-    cd: "nwd",
-    ls: "nwd",
-    up: "nwd",
-    os: "os",
+    cd: "navigation",
+    ls: "navigation",
+    up: "navigation",
+    os: "systemInfo",
     hash: "crypto",
     compress: "zip",
     decompress: "zip",
@@ -29,4 +29,4 @@ const determineModule = (moduleCommand) => {
   return modules[moduleCommand];
 };
 
-export { lineToVariablesParse };
+export { lineToVariables };

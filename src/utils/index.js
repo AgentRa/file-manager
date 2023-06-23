@@ -1,14 +1,5 @@
-import { youNameIt, greetUser, goodbyeUser } from "./usernameParsers.js";
-import { getDirectoryName, youAreHere } from "./pathParsers.js";
-import { lineToVariablesParse } from "./lineToVariablesParse.js";
-import { Emitter } from "../emitter.js";
+import * as parse from "./parse.js";
+import * as path from "./path.js";
+import * as user from "./user.js";
 
-export {
-  youNameIt,
-  greetUser,
-  goodbyeUser,
-  getDirectoryName,
-  youAreHere,
-  lineToVariablesParse,
-  Emitter,
-};
+export { parse, path, user };
