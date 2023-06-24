@@ -7,7 +7,6 @@ import { Emitter } from "./emitter.js";
 const FileManager = {
   pathToWorkingDirectory: homedir(),
   emitter: new Emitter(),
-  application: this,
 };
 
 user.greetUser(user.youNameIt(argv));
@@ -15,15 +14,15 @@ path.youAreHere(FileManager.pathToWorkingDirectory);
 
 commandLine.on("line", async (line) => {
   try {
-    const { module, moduleCommand, commandArguments } = parse.lineToVariables(
+    const { module, command, lineArguments } = parse.lineToVariables(
       line,
       FileManager.emitter
     );
 
     await FileManager.emitter.execute(
       module,
-      moduleCommand,
-      commandArguments,
+      command,
+      lineArguments,
       FileManager
     );
 

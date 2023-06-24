@@ -1,22 +1,21 @@
 const lineToVariables = (line, emitter) => {
-  const [moduleCommand, ...commandArguments] = line
+  const [command, ...lineArguments] = line
     .split(" ")
     .filter((chunk) => chunk !== "");
 
-  const module =
-    determineModule(moduleCommand) || emitter.throw("Invalid input");
+  const module = determineModule(command) || emitter.throw("Invalid input");
 
-  return { module, moduleCommand, commandArguments };
+  return { module, command, lineArguments };
 };
 
-const determineModule = (moduleCommand) => {
+const determineModule = (command) => {
   const modules = {
-    cat: "fs",
-    add: "fs",
-    rn: "fs",
-    cp: "fs",
-    mv: "fs",
-    rm: "fs",
+    cat: "fileSystem",
+    add: "fileSystem",
+    rn: "fileSystem",
+    cp: "fileSystem",
+    mv: "fileSystem",
+    rm: "fileSystem",
     cd: "navigation",
     ls: "navigation",
     up: "navigation",
@@ -26,7 +25,7 @@ const determineModule = (moduleCommand) => {
     decompress: "zip",
   };
 
-  return modules[moduleCommand];
+  return modules[command];
 };
 
 export { lineToVariables };

@@ -1,20 +1,22 @@
 import { readFile, lstat } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import {path} from "../utils/index.js";
+import { path } from "../utils/index.js";
 
-const hash = async (commandArguments, application) => {
-  const source = path.create(commandArguments[0], application.pathToWorkingDirectory)
-  const isFile = (await lstat(source)).isFile();
+const hash = async (lineArguments, application) => {
+  const pathToFile = lineArguments.pop();
 
-  if (!isFile) throw new Error('Operation failed')
+  const source = path.create(application.pathToWorkingDirectory, pathToFile);
+  const filetype = (await lstat(source)).isFile();
+
+  if (!filetype) throw new Error("Operation failed");
 
   try {
     const file = await readFile(source);
-    const hash = createHash("sha256").update(file).digest("hex", file);
+    const hash = createHash("sha256").update(file).digest("hex");
 
     console.log(hash);
   } catch (error) {
-    application.emitter.throw(error.message)
+    application.emitter.throw(error.message);
   }
 };
 

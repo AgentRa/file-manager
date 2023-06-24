@@ -1,9 +1,12 @@
 import * as operatingSystem from "node:os";
 
-const os = (commandArguments, application) => {
-  if (commandArguments.length !== 1) throw new Error("Operation failed");
+const os = (lineArguments, application) => {
+  if (lineArguments.length !== 1) throw new Error("Operation failed");
+
+  const commandOption = lineArguments.pop();
+
   try {
-    switch (commandArguments[0]) {
+    switch (commandOption) {
       case "--EOL":
         console.log(operatingSystem.EOL);
         break;

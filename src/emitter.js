@@ -6,8 +6,8 @@ class Emitter extends EventEmitter {
     this.emit("error", error);
   };
 
-  execute = async (module, moduleCommand, commandArguments, application) => {
-    await modules[module][moduleCommand](commandArguments, application);
+  execute = async (module, command, lineArguments, application) => {
+    await modules[module][command](lineArguments, application);
   };
 }
 export { Emitter };
