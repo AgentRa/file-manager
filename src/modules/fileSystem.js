@@ -15,8 +15,7 @@ const cat = async (lineArguments, application) => {
     readStream.on("error", (error) => reject(error));
   });
   try {
-    readStream.pipe(process.stdout);
-
+    await pipeline(readStream, process.stdout);
     await readStreamPromiseEnd;
   } catch (error) {
     application.emitter.throw(`Operation failed: ${error.message}`);
@@ -25,10 +24,9 @@ const cat = async (lineArguments, application) => {
 const add = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);
 
-  const newFileName = lineArguments.pop();
   const destination = path.create(
     application.pathToWorkingDirectory,
-    newFileName
+    lineArguments.pop()
   );
   try {
     await writeFile(destination, "", { flag: "wx" });

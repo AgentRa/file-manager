@@ -2,14 +2,15 @@ import { argv } from "node:process";
 import { homedir } from "node:os";
 import { parse, path, user } from "./utils/index.js";
 import { commandLine } from "./commandLine.js";
-import { Emitter } from "./emitter.js";
+import { emitter } from "./emitter.js";
 
 const FileManager = {
   pathToWorkingDirectory: homedir(),
-  emitter: new Emitter(),
+  username: user.geNameFrom(argv),
+  emitter,
 };
 
-user.greetUser(user.youNameIt(argv));
+user.greet(FileManager.username);
 path.youAreHere(FileManager.pathToWorkingDirectory);
 
 commandLine.on("line", async (line) => {
@@ -32,8 +33,4 @@ commandLine.on("line", async (line) => {
 
     path.youAreHere(FileManager.pathToWorkingDirectory);
   }
-});
-
-FileManager.emitter.on("error", (error) => {
-  throw new Error(error);
 });

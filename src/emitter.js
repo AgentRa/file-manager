@@ -10,4 +10,11 @@ class Emitter extends EventEmitter {
     await modules[module][command](lineArguments, application);
   };
 }
-export { Emitter };
+
+const emitter = new Emitter();
+
+emitter.on("error", (error) => {
+  throw new Error(error);
+});
+
+export { emitter };

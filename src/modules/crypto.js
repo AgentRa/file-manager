@@ -5,8 +5,10 @@ import { path, validate } from "../utils/index.js";
 const hash = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);
 
-  const pathToFile = lineArguments.pop();
-  const source = path.create(application.pathToWorkingDirectory, pathToFile);
+  const source = path.create(
+    application.pathToWorkingDirectory,
+    lineArguments.pop()
+  );
   try {
     await validate.fileType(source);
 

@@ -1,10 +1,10 @@
 import * as operatingSystem from "node:os";
+import { validate } from "../utils/index.js";
 
 const os = (lineArguments, application) => {
-  if (lineArguments.length !== 1) throw new Error("Operation failed");
+  validate.argumentLength(lineArguments, 1);
 
   const commandOption = lineArguments.pop();
-
   try {
     switch (commandOption) {
       case "--EOL":
@@ -26,7 +26,7 @@ const os = (lineArguments, application) => {
         application.emitter.throw("Operation failed");
     }
   } catch (error) {
-    application.emitter.throw(error.message);
+    application.emitter.throw(`Operation failed: ${error.message}`);
   }
 };
 

@@ -9,12 +9,12 @@ commandLine.on("line", (line) => {
 });
 
 commandLine.on("SIGINT", () => {
-  user.goodbyeUser(user.youNameIt(argv));
+  user.goodbye(user.geNameFrom(argv));
   process.exit(0);
 });
 
-commandLine.on("error", () => {
-  console.log("Operation failed");
+commandLine.on("error", (error) => {
+  console.error(error.message);
 });
 
 export { commandLine };

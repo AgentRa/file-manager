@@ -5,15 +5,15 @@ import { path, validate } from "../utils/index.js";
 const compress = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 2);
 
-  const [fileToZip, directoryPath] = lineArguments;
+  const [filePath, directoryPath] = lineArguments;
   const workingDirectoryPath = application.pathToWorkingDirectory;
 
-  const source = path.create(workingDirectoryPath, fileToZip);
+  const source = path.create(workingDirectoryPath, filePath);
   const destination = path.create(workingDirectoryPath, directoryPath);
-  const zipPath = path.zip(source);
+  const destinationZip = destination.concat(path.zip(filePath));
 
   const inputStream = createReadStream(source);
-  const outputStream = createWriteStream(destination.concat(zipPath));
+  const outputStream = createWriteStream(destinationZip);
   const zip = createBrotliCompress();
   try {
     await validate.fileType(source);
@@ -32,10 +32,10 @@ const decompress = async (lineArguments, application) => {
 
   const source = path.create(workingDirectoryPath, fileToUnzip);
   const destination = path.create(workingDirectoryPath, directoryPath);
-  const filePath = path.unzip(source);
+  const destinationUnzip = destination.concat(path.unzip(source));
 
   const input = createReadStream(source);
-  const output = createWriteStream(destination.concat(filePath));
+  const output = createWriteStream(destinationUnzip);
   const unzip = createBrotliDecompress();
   try {
     await validate.fileType(source);
