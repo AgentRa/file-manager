@@ -13,8 +13,4 @@ commandLine.on("SIGINT", () => {
   process.exit(0);
 });
 
-commandLine.on("error", (error) => {
-  console.error(error.message);
-});
-
 export { commandLine };

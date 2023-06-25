@@ -39,7 +39,7 @@ const ls = async (lineArguments, application) => {
       ...unknownTypesSorted,
     ]);
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(error.message);
   }
 };
 

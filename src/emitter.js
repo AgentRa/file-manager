@@ -14,7 +14,7 @@ class Emitter extends EventEmitter {
 const emitter = new Emitter();
 
 emitter.on("error", (error) => {
-  throw new Error(error);
+  console.error(error.message);
 });
 
 export { emitter };

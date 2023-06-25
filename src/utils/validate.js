@@ -2,7 +2,7 @@ import { lstat } from "node:fs/promises";
 
 const argumentLength = (lineArguments, expectedLength) => {
   if (lineArguments.length !== expectedLength) {
-    throw new Error(`Operation failed: wrong number of arguments`);
+    throw new Error(`Invalid input: wrong number of arguments`);
   }
   return true;
 };

@@ -6,17 +6,20 @@ import { path, validate } from "../utils/index.js";
 const cat = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);
 
-  const pathToFile = lineArguments.pop();
-  const source = path.create(application.pathToWorkingDirectory, pathToFile);
+  const source = path.create(
+    application.pathToWorkingDirectory,
+    lineArguments.pop()
+  );
 
-  const readStream = createReadStream(source);
-  const readStreamPromiseEnd = new Promise((resolve, reject) => {
-    readStream.on("end", () => resolve());
-    readStream.on("error", (error) => reject(error));
-  });
   try {
+    const readStream = createReadStream(source);
+    // const readStreamPromiseEnd = new Promise((resolve, reject) => {
+    //   readStream.on("end", () => resolve());
+    //   readStream.on("error", (error) => reject(error.message));
+    // });
+
     await pipeline(readStream, process.stdout);
-    await readStreamPromiseEnd;
+    // await readStreamPromiseEnd;
   } catch (error) {
     application.emitter.throw(`Operation failed: ${error.message}`);
   }
@@ -58,22 +61,21 @@ const cp = async (lineArguments, application) => {
     pathToNewDirectory
   );
   const filename = "/" + source.split("/").pop();
-
-  const readStream = createReadStream(source);
-  const writeStream = createWriteStream(destination.concat(filename));
-
-  const readStreamEndPromise = new Promise((resolve, reject) => {
-    readStream.on("end", () => {
-      resolve();
-    });
-    readStream.on("error", (error) => {
-      reject(error);
-    });
-  });
-
   try {
     await validate.fileType(source);
     await validate.directoryType(destination);
+
+    const readStream = createReadStream(source);
+    const writeStream = createWriteStream(destination.concat(filename));
+    const readStreamEndPromise = new Promise((resolve, reject) => {
+      readStream.on("end", () => {
+        resolve();
+      });
+      readStream.on("error", (error) => {
+        reject(error.message);
+      });
+    });
+
     await pipeline(readStream, writeStream);
     await readStreamEndPromise;
   } catch (error) {
@@ -90,6 +92,7 @@ const mv = async (lineArguments, application) => {
     pathToNewDirectory
   );
   const filename = "/" + source.split("/").pop();
+
   const readStream = createReadStream(source);
   const writeStream = createWriteStream(destination.concat(filename));
 

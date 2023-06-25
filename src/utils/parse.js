@@ -1,9 +1,12 @@
-const lineToVariables = (line, emitter) => {
+const toParameters = (line) => {
   const [command, ...lineArguments] = line
     .split(" ")
     .filter((chunk) => chunk !== "");
 
-  const module = determineModule(command) || emitter.throw("Invalid input");
+  const module = determineModule(command);
+
+  if (module === undefined)
+    throw new Error(`Invalid input: command ${command} not found`);
 
   return { module, command, lineArguments };
 };
@@ -28,4 +31,4 @@ const determineModule = (command) => {
   return modules[command];
 };
 
-export { lineToVariables };
+export { toParameters };

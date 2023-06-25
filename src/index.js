@@ -3,6 +3,7 @@ import { homedir } from "node:os";
 import { parse, path, user } from "./utils/index.js";
 import { commandLine } from "./commandLine.js";
 import { emitter } from "./emitter.js";
+import { youAreHere } from "./utils/path.js";
 
 const FileManager = {
   pathToWorkingDirectory: homedir(),
@@ -15,22 +16,11 @@ path.youAreHere(FileManager.pathToWorkingDirectory);
 
 commandLine.on("line", async (line) => {
   try {
-    const { module, command, lineArguments } = parse.lineToVariables(
-      line,
-      FileManager.emitter
-    );
-
-    await FileManager.emitter.execute(
-      module,
-      command,
-      lineArguments,
-      FileManager
-    );
-
-    path.youAreHere(FileManager.pathToWorkingDirectory);
+    const { module, command, lineArguments } = parse.toParameters(line);
+    await emitter.execute(module, command, lineArguments, FileManager);
   } catch (error) {
-    console.log(error.message);
-
-    path.youAreHere(FileManager.pathToWorkingDirectory);
+    emitter.throw(error);
+  } finally {
+    youAreHere(FileManager.pathToWorkingDirectory);
   }
 });

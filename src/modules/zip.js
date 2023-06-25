@@ -20,7 +20,7 @@ const compress = async (lineArguments, application) => {
     await validate.directoryType(destination);
     await pipeline(inputStream, zip, outputStream);
   } catch (error) {
-    application.emitter.throw(error.message);
+    application.emitter.throw(`Operation failed: ${error.message}`);
   }
 };
 
