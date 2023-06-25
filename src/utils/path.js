@@ -4,8 +4,12 @@ const getFileName = (filePath) => fileURLToPath(filePath);
 const getDirectoryName = (filePath) => dirname(getFileName(filePath));
 const create = (source, addon) => resolve(source + "/", addon);
 
+const zip = (source) => "/" + source.split("/").pop() + ".gz";
+
+const unzip = (source) => "/" + source.split("/").pop().slice(0, -3);
+
 const youAreHere = (directoryPath) => {
   console.log(`You are currently in ${directoryPath}`);
 };
 
-export { create, getDirectoryName, getFileName, youAreHere };
+export { create, getDirectoryName, getFileName, youAreHere, zip, unzip };

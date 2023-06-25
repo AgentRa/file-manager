@@ -1,14 +1,13 @@
 import { readdir, lstat } from "node:fs/promises";
-import { path } from "../utils/index.js";
+import { path, validate } from "../utils/index.js";
 
 const ls = async (lineArguments, application) => {
-  if (lineArguments.length) throw new Error("Operation failed");
-
+  validate.argumentLength(lineArguments, 0);
   try {
-    const fileList = await readdir(application.pathToWorkingDirectory);
+    const entryList = await readdir(application.pathToWorkingDirectory);
 
-    const result = await Promise.all(
-      fileList.map(async (file) => {
+    const unsortedEntryList = await Promise.all(
+      entryList.map(async (file) => {
         const source = path.create(application.pathToWorkingDirectory, file);
         const sourceStats = await lstat(source);
 
@@ -18,25 +17,34 @@ const ls = async (lineArguments, application) => {
       })
     );
 
-    const directoriesSorted = result
+    const directoriesSorted = unsortedEntryList
       .filter((entry) => entry?.type === "directory")
       .sort((a, b) =>
         a.name.localeCompare(b.name, lineArguments, { sensitivity: "base" })
       );
-    const filesSorted = result
+    const filesSorted = unsortedEntryList
       .filter((entry) => entry?.type === "file")
       .sort((a, b) =>
         a.name.localeCompare(b.name, lineArguments, { sensitivity: "base" })
       );
+    const unknownTypesSorted = unsortedEntryList
+      .filter((entry) => entry?.type === "unknown")
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, lineArguments, { sensitivity: "base" })
+      );
 
-    console.table([...directoriesSorted, ...filesSorted]);
+    console.table([
+      ...directoriesSorted,
+      ...filesSorted,
+      ...unknownTypesSorted,
+    ]);
   } catch (error) {
-    application.emitter.throw(error.message);
+    application.emitter.throw(`Operation failed: ${error.message}`);
   }
 };
 
 const up = async (lineArguments, application) => {
-  if (lineArguments.length) throw new Error("Operation failed");
+  validate.argumentLength(lineArguments, 0);
 
   application.pathToWorkingDirectory = path.create(
     application.pathToWorkingDirectory,
@@ -45,22 +53,18 @@ const up = async (lineArguments, application) => {
 };
 
 const cd = async (lineArguments, application) => {
-  if (lineArguments.length !== 1) throw new Error("Operation failed");
+  validate.argumentLength(lineArguments, 1);
 
-  const pathToDirectory = lineArguments.pop();
-
+  const source = path.create(
+    application.pathToWorkingDirectory,
+    lineArguments.pop()
+  );
   try {
-    const source = path.create(
-      application.pathToWorkingDirectory,
-      pathToDirectory
-    );
-
-    await lstat(source);
-
-    application.pathToWorkingDirectory = source;
+    await validate.directoryType(source);
   } catch (error) {
-    application.emitter.throw(error.message);
+    application.emitter.throw(`Operation failed: ${error.message}`);
   }
+  application.pathToWorkingDirectory = source;
 };
 
 export { ls, up, cd };

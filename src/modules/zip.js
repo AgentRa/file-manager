@@ -1,60 +1,48 @@
 import { createReadStream, createWriteStream } from "node:fs";
-import { pipeline } from "node:stream";
-import { promisify } from "node:util";
+import { pipeline } from "node:stream/promises";
 import { createBrotliCompress, createBrotliDecompress } from "node:zlib";
-import { path } from "../utils/index.js";
-import { lstat } from "node:fs/promises";
+import { path, validate } from "../utils/index.js";
 const compress = async (lineArguments, application) => {
-  if (lineArguments.length !== 2) throw new Error("Operation failed");
+  validate.argumentLength(lineArguments, 2);
 
   const [fileToZip, directoryPath] = lineArguments;
   const workingDirectoryPath = application.pathToWorkingDirectory;
 
   const source = path.create(workingDirectoryPath, fileToZip);
   const destination = path.create(workingDirectoryPath, directoryPath);
+  const zipPath = path.zip(source);
 
-  const sourceType = (await lstat(source)).isFile();
-  const destinationType = (await lstat(destination)).isDirectory();
-
-  if (!sourceType || !destinationType) throw new Error("Operation failed");
-
+  const inputStream = createReadStream(source);
+  const outputStream = createWriteStream(destination.concat(zipPath));
+  const zip = createBrotliCompress();
   try {
-    const fileToZip = "/" + source.split("/").pop() + ".gz";
-    const input = createReadStream(source);
-    const output = createWriteStream(destination.concat(fileToZip));
-    const zip = createBrotliCompress();
-
-    await promisify(pipeline)(input, zip, output);
+    await validate.fileType(source);
+    await validate.directoryType(destination);
+    await pipeline(inputStream, zip, outputStream);
   } catch (error) {
     application.emitter.throw(error.message);
   }
 };
 
 const decompress = async (lineArguments, application) => {
-  if (lineArguments.length !== 2) throw new Error("Operation failed");
+  validate.argumentLength(lineArguments, 2);
 
   const [fileToUnzip, directoryPath] = lineArguments;
   const workingDirectoryPath = application.pathToWorkingDirectory;
 
   const source = path.create(workingDirectoryPath, fileToUnzip);
   const destination = path.create(workingDirectoryPath, directoryPath);
+  const filePath = path.unzip(source);
 
-  const sourceType = (await lstat(source)).isFile();
-  const destinationType = (await lstat(destination)).isDirectory();
-  const zipType = source.substring(source.length - 3) === ".gz";
-
-  if (!sourceType || !destinationType || !zipType)
-    throw new Error("Operation failed");
-
+  const input = createReadStream(source);
+  const output = createWriteStream(destination.concat(filePath));
+  const unzip = createBrotliDecompress();
   try {
-    const fileToUnzip = "/" + source.split("/").pop().slice(0, -3);
-    const input = createReadStream(source);
-    const output = createWriteStream(destination.concat(fileToUnzip));
-    const unzip = createBrotliDecompress();
-
-    await promisify(pipeline)(input, unzip, output);
+    await validate.fileType(source);
+    await validate.directoryType(destination);
+    await pipeline(input, unzip, output);
   } catch (error) {
-    application.emitter.throw(error.message);
+    application.emitter.throw(`Operation failed: ${error.message}`);
   }
 };
 
