@@ -24,10 +24,7 @@ const cat = async (lineArguments, application) => {
     readStream?.emit("close");
   }
 
-  readStream?.on("close", () => {
-    console.log("");
-    youAreHere(application.pathToWorkingDirectory);
-  });
+  readStream?.on("close", () => youAreHere(application.pathToWorkingDirectory));
 };
 const add = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);

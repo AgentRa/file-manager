@@ -1,17 +1,12 @@
 import { EventEmitter } from "node:events";
-import modules from "./modules/index.js";
 
-class Emitter extends EventEmitter {
+class ErrorEventEmitter extends EventEmitter {
   throw = (error) => {
     this.emit("error", error.message);
   };
-
-  execute = async (module, command, lineArguments, application) => {
-    await modules[module][command](lineArguments, application);
-  };
 }
 
-const emitter = new Emitter();
+const emitter = new ErrorEventEmitter();
 
 emitter.on("error", (message) => {
   console.error(message);
