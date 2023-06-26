@@ -21,7 +21,7 @@ const cat = async (lineArguments, application) => {
     await pipeline(readStream, process.stdout);
     // await readStreamPromiseEnd;
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(error);
   }
 };
 const add = async (lineArguments, application) => {
@@ -34,7 +34,7 @@ const add = async (lineArguments, application) => {
   try {
     await writeFile(destination, "", { flag: "wx" });
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(error);
   }
 };
 const rn = async (lineArguments, application) => {
@@ -48,7 +48,7 @@ const rn = async (lineArguments, application) => {
     await validate.fileType(newPath);
     await rename(oldPath, newPath);
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(error);
   }
 };
 const cp = async (lineArguments, application) => {
@@ -79,7 +79,7 @@ const cp = async (lineArguments, application) => {
     await pipeline(readStream, writeStream);
     await readStreamEndPromise;
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(error);
   }
 };
 const mv = async (lineArguments, application) => {
@@ -112,7 +112,7 @@ const mv = async (lineArguments, application) => {
     await readStreamEndPromise;
     await unlink(source);
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(error);
   }
 };
 const rm = async (lineArguments, application) => {
@@ -124,7 +124,7 @@ const rm = async (lineArguments, application) => {
     await validate.fileType(source);
     await unlink(source);
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(new Error(error.message));
   }
 };
 

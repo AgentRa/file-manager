@@ -18,7 +18,7 @@ const fileType = async (filePath) => {
 const directoryType = async (directoryPath) => {
   const stats = await lstat(directoryPath);
   if (!stats.isDirectory()) {
-    throw new Error(`invalid directory type`);
+    throw new Error(`Operation failed: invalid directory type`);
   }
   return true;
 };
