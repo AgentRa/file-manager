@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 
 class ErrorEventEmitter extends EventEmitter {
-  throw = (error) => {
+  console = (error) => {
     this.emit("error", error.message);
   };
 }

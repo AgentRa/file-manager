@@ -28,7 +28,7 @@ const os = (lineArguments, application) => {
       console.log(OS.arch());
       break;
     default:
-      application.emitter.throw(
+      application.emitter.console(
         new Error(
           `Invalid input: ${commandOption} is not a valid option for [os] module`
         )

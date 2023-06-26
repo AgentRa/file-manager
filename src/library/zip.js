@@ -22,7 +22,9 @@ const compress = async (lineArguments, application) => {
 
     await pipeline(inputStream, zip, outputStream);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   }
 };
 
@@ -46,7 +48,9 @@ const decompress = async (lineArguments, application) => {
 
     await pipeline(input, unzip, output);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   }
 };
 

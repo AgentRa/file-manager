@@ -17,7 +17,9 @@ const hash = async (lineArguments, application) => {
 
     console.log(hash);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   }
 };
 

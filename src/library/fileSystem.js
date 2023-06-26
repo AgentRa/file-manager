@@ -19,7 +19,9 @@ const cat = async (lineArguments, application) => {
     readStream = createReadStream(source, { encoding: "utf-8" });
     readStream.pipe(stdout);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   } finally {
     readStream?.emit("close");
   }
@@ -36,7 +38,9 @@ const add = async (lineArguments, application) => {
   try {
     await writeFile(destination, "", { flag: "wx" });
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   }
 };
 const rn = async (lineArguments, application) => {
@@ -49,7 +53,9 @@ const rn = async (lineArguments, application) => {
     await validate.fileType(oldPath);
     await rename(oldPath, newPath);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   }
 };
 const cp = async (lineArguments, application) => {
@@ -73,7 +79,9 @@ const cp = async (lineArguments, application) => {
 
     await pipeline(readStream, writeStream);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   } finally {
     readStream?.emit("close");
     writeStream?.emit("close");
@@ -101,7 +109,9 @@ const mv = async (lineArguments, application) => {
     await pipeline(readStream, writeStream);
     await unlink(source);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   } finally {
     readStream?.emit("close");
     writeStream?.emit("close");
@@ -116,7 +126,9 @@ const rm = async (lineArguments, application) => {
     await validate.fileType(source);
     await unlink(source);
   } catch (error) {
-    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+    application.emitter.console(
+      new Error(`Operation failed: ${error.message}`)
+    );
   }
 };
 
