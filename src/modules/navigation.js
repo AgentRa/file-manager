@@ -61,10 +61,10 @@ const cd = async (lineArguments, application) => {
   );
   try {
     await validate.directoryType(source);
+    application.pathToWorkingDirectory = source;
   } catch (error) {
     application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
-  application.pathToWorkingDirectory = source;
 };
 
 export { ls, up, cd };

@@ -1,4 +1,4 @@
-import * as operatingSystem from "node:os";
+import * as OS from "node:os";
 import { validate } from "../utils/index.js";
 
 const os = (lineArguments, application) => {
@@ -8,24 +8,24 @@ const os = (lineArguments, application) => {
 
   switch (commandOption) {
     case "--EOL":
-      console.log(JSON.stringify(operatingSystem.EOL));
+      console.log(JSON.stringify(OS.EOL));
       break;
     case "--cpus":
       console.table(
-        operatingSystem.cpus().map(({ model, speed }) => ({
+        OS.cpus().map(({ model, speed }) => ({
           model,
           speed: speed + " GHz",
         }))
       );
       break;
     case "--homedir":
-      console.log(operatingSystem.homedir());
+      console.log(OS.homedir());
       break;
     case "--username":
-      console.log(operatingSystem.userInfo().username);
+      console.log(OS.userInfo().username);
       break;
     case "--architecture":
-      console.log(operatingSystem.arch());
+      console.log(OS.arch());
       break;
     default:
       application.emitter.throw(

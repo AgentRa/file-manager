@@ -8,6 +8,7 @@ import { youAreHere } from "../utils/path.js";
 const cat = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);
 
+  let readStream;
   const source = path.create(
     application.pathToWorkingDirectory,
     lineArguments.pop()
@@ -15,17 +16,18 @@ const cat = async (lineArguments, application) => {
 
   try {
     await validate.fileType(source);
-    const readStream = createReadStream(source, { encoding: "utf-8" });
-
-    readStream.on("close", () => {
-      console.log("");
-      youAreHere(application.pathToWorkingDirectory);
-    });
-
+    readStream = createReadStream(source, { encoding: "utf-8" });
     readStream.pipe(stdout);
   } catch (error) {
     application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+  } finally {
+    readStream?.emit("close");
   }
+
+  readStream?.on("close", () => {
+    console.log("");
+    youAreHere(application.pathToWorkingDirectory);
+  });
 };
 const add = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);
@@ -63,25 +65,21 @@ const cp = async (lineArguments, application) => {
     pathToNewDirectory
   );
   const filename = "/" + source.split("/").pop();
+  let readStream, writeStream;
+
   try {
     await validate.fileType(source);
     await validate.directoryType(destination);
 
-    const readStream = createReadStream(source);
-    const writeStream = createWriteStream(destination.concat(filename));
-    const readStreamEndPromise = new Promise((resolve, reject) => {
-      readStream.on("end", () => {
-        resolve();
-      });
-      readStream.on("error", (error) => {
-        reject(error.message);
-      });
-    });
+    readStream = createReadStream(source);
+    writeStream = createWriteStream(destination.concat(filename));
 
     await pipeline(readStream, writeStream);
-    await readStreamEndPromise;
   } catch (error) {
     application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+  } finally {
+    readStream?.emit("close");
+    writeStream?.emit("close");
   }
 };
 const mv = async (lineArguments, application) => {
@@ -94,29 +92,22 @@ const mv = async (lineArguments, application) => {
     pathToNewDirectory
   );
   const filename = "/" + source.split("/").pop();
+  let readStream, writeStream;
 
   try {
     await validate.fileType(source);
     await validate.directoryType(destination);
 
-    const readStream = createReadStream(source);
-    const writeStream = createWriteStream(destination.concat(filename));
-
-    const readStreamEndPromise = new Promise((resolve, reject) => {
-      readStream.on("end", () => {
-        resolve();
-      });
-
-      readStream.on("error", (error) => {
-        reject(error);
-      });
-    });
+    readStream = createReadStream(source);
+    writeStream = createWriteStream(destination.concat(filename));
 
     await pipeline(readStream, writeStream);
-    await readStreamEndPromise;
     await unlink(source);
   } catch (error) {
     application.emitter.throw(new Error(`Operation failed: ${error.message}`));
+  } finally {
+    readStream?.emit("close");
+    writeStream?.emit("close");
   }
 };
 const rm = async (lineArguments, application) => {
