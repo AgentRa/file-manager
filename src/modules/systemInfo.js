@@ -8,10 +8,15 @@ const os = (lineArguments, application) => {
 
   switch (commandOption) {
     case "--EOL":
-      console.log(operatingSystem.EOL);
+      console.log(JSON.stringify(operatingSystem.EOL));
       break;
     case "--cpus":
-      console.log(operatingSystem.cpus());
+      console.table(
+        operatingSystem.cpus().map(({ model, speed }) => ({
+          model,
+          speed: speed + " GHz",
+        }))
+      );
       break;
     case "--homedir":
       console.log(operatingSystem.homedir());
@@ -23,7 +28,11 @@ const os = (lineArguments, application) => {
       console.log(operatingSystem.arch());
       break;
     default:
-      application.emitter.throw(new Error("Operation failed: "));
+      application.emitter.throw(
+        new Error(
+          `Invalid input: ${commandOption} is not a valid option for [os] module`
+        )
+      );
   }
 };
 
