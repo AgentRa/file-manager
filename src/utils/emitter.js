@@ -6,10 +6,10 @@ class ErrorEventEmitter extends EventEmitter {
   };
 }
 
-const errorEvent = new ErrorEventEmitter();
+const emitter = new ErrorEventEmitter();
 
-errorEvent.on("error", (message) => {
+emitter.on("error", (message) => {
   console.error(message);
 });
 
-export { errorEvent };
+export { emitter };

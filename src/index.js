@@ -1,7 +1,6 @@
 import { argv, stdin as input } from "node:process";
 import { homedir } from "node:os";
-import { emitter } from "./emitter.js";
-import { parse, path, user } from "./utils/index.js";
+import { parse, path, user, emitter } from "./utils/index.js";
 import library from "./library/index.js";
 import readline from "node:readline/promises";
 
