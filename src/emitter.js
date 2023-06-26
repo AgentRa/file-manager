@@ -3,7 +3,7 @@ import modules from "./modules/index.js";
 
 class Emitter extends EventEmitter {
   throw = (error) => {
-    this.emit("error", error);
+    this.emit("error", error.message);
   };
 
   execute = async (module, command, lineArguments, application) => {
@@ -13,9 +13,8 @@ class Emitter extends EventEmitter {
 
 const emitter = new Emitter();
 
-emitter.on("error", (error) => {
-  console.error("error", error);
-  console.error("error.message", error.message);
+emitter.on("error", (message) => {
+  console.error(message);
 });
 
 export { emitter };

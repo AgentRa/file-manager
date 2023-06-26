@@ -2,7 +2,9 @@ import { lstat } from "node:fs/promises";
 
 const argumentLength = (lineArguments, expectedLength) => {
   if (lineArguments.length !== expectedLength) {
-    throw new Error(`Invalid input: wrong number of arguments`);
+    throw new Error(
+      `Invalid input: wrong number of arguments provided, expected ${expectedLength} but received ${lineArguments.length}`
+    );
   }
   return true;
 };
@@ -10,17 +12,15 @@ const argumentLength = (lineArguments, expectedLength) => {
 const fileType = async (filePath) => {
   const stats = await lstat(filePath);
   if (!stats.isFile()) {
-    throw new Error(`invalid file type ${filePath}`);
+    throw new Error(`${filePath} is not file type`);
   }
-  return true;
 };
 
 const directoryType = async (directoryPath) => {
   const stats = await lstat(directoryPath);
   if (!stats.isDirectory()) {
-    throw new Error(`Operation failed: invalid directory type`);
+    throw new Error(`${directoryPath} is not directory type}`);
   }
-  return true;
 };
 
 export { argumentLength, fileType, directoryType };

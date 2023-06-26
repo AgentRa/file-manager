@@ -1,7 +1,9 @@
 import { createReadStream, createWriteStream } from "node:fs";
 import { writeFile, rename, unlink } from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
+import { stdout } from "node:process";
 import { path, validate } from "../utils/index.js";
+import { youAreHere } from "../utils/path.js";
 
 const cat = async (lineArguments, application) => {
   validate.argumentLength(lineArguments, 1);
@@ -12,16 +14,17 @@ const cat = async (lineArguments, application) => {
   );
 
   try {
-    const readStream = createReadStream(source);
-    // const readStreamPromiseEnd = new Promise((resolve, reject) => {
-    //   readStream.on("end", () => resolve());
-    //   readStream.on("error", (error) => reject(error.message));
-    // });
+    await validate.fileType(source);
+    const readStream = createReadStream(source, { encoding: "utf-8" });
 
-    await pipeline(readStream, process.stdout);
-    // await readStreamPromiseEnd;
+    readStream.on("close", () => {
+      console.log("");
+      youAreHere(application.pathToWorkingDirectory);
+    });
+
+    readStream.pipe(stdout);
   } catch (error) {
-    application.emitter.throw(error);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 const add = async (lineArguments, application) => {
@@ -34,7 +37,7 @@ const add = async (lineArguments, application) => {
   try {
     await writeFile(destination, "", { flag: "wx" });
   } catch (error) {
-    application.emitter.throw(error);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 const rn = async (lineArguments, application) => {
@@ -45,10 +48,9 @@ const rn = async (lineArguments, application) => {
   const newPath = path.create(application.pathToWorkingDirectory, newFileName);
   try {
     await validate.fileType(oldPath);
-    await validate.fileType(newPath);
     await rename(oldPath, newPath);
   } catch (error) {
-    application.emitter.throw(error);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 const cp = async (lineArguments, application) => {
@@ -79,7 +81,7 @@ const cp = async (lineArguments, application) => {
     await pipeline(readStream, writeStream);
     await readStreamEndPromise;
   } catch (error) {
-    application.emitter.throw(error);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 const mv = async (lineArguments, application) => {
@@ -93,26 +95,28 @@ const mv = async (lineArguments, application) => {
   );
   const filename = "/" + source.split("/").pop();
 
-  const readStream = createReadStream(source);
-  const writeStream = createWriteStream(destination.concat(filename));
-
-  const readStreamEndPromise = new Promise((resolve, reject) => {
-    readStream.on("end", () => {
-      resolve();
-    });
-
-    readStream.on("error", (error) => {
-      reject(error);
-    });
-  });
   try {
     await validate.fileType(source);
     await validate.directoryType(destination);
+
+    const readStream = createReadStream(source);
+    const writeStream = createWriteStream(destination.concat(filename));
+
+    const readStreamEndPromise = new Promise((resolve, reject) => {
+      readStream.on("end", () => {
+        resolve();
+      });
+
+      readStream.on("error", (error) => {
+        reject(error);
+      });
+    });
+
     await pipeline(readStream, writeStream);
     await readStreamEndPromise;
     await unlink(source);
   } catch (error) {
-    application.emitter.throw(error);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 const rm = async (lineArguments, application) => {
@@ -124,7 +128,7 @@ const rm = async (lineArguments, application) => {
     await validate.fileType(source);
     await unlink(source);
   } catch (error) {
-    application.emitter.throw(new Error(error.message));
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 

@@ -39,7 +39,7 @@ const ls = async (lineArguments, application) => {
       ...unknownTypesSorted,
     ]);
   } catch (error) {
-    application.emitter.throw(error.message);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
 };
 
@@ -62,7 +62,7 @@ const cd = async (lineArguments, application) => {
   try {
     await validate.directoryType(source);
   } catch (error) {
-    application.emitter.throw(`Operation failed: ${error.message}`);
+    application.emitter.throw(new Error(`Operation failed: ${error.message}`));
   }
   application.pathToWorkingDirectory = source;
 };

@@ -23,7 +23,7 @@ const os = (lineArguments, application) => {
       console.log(operatingSystem.arch());
       break;
     default:
-      application.emitter.throw("Operation failed: ");
+      application.emitter.throw(new Error("Operation failed: "));
   }
 };
 
