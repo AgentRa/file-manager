@@ -1,15 +1,15 @@
 import { EventEmitter } from "node:events";
 
 class ErrorEventEmitter extends EventEmitter {
-  throw = (error) => {
+  console = (error) => {
     this.emit("error", error.message);
   };
 }
 
-const emitter = new ErrorEventEmitter();
+const errorEvent = new ErrorEventEmitter();
 
-emitter.on("error", (message) => {
+errorEvent.on("error", (message) => {
   console.error(message);
 });
 
-export { emitter };
+export { errorEvent };
